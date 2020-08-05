@@ -18,6 +18,56 @@ import sys
 
 #cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 #/home/ysg/下载/parsec-benchmark-master/bin
+
+
+def update(env):
+    ENV, x, y = get_user_location(env.creat_ENV())
+    for episode in range(300):
+        total_step = 6000
+        step = 0
+        observation = [[0, 0]]
+        observation1 = [0, 0]
+        count = 0
+        all_reward = []
+        while True:
+            action = RL.choose_action(step, observation)  # 强化学习，动作选择
+            print("action", action)
+            x_speed, y_speed = env.get_action(action)
+            print(x_speed, observation[0])
+            observation_ = []
+            observation_.append(observation1[0] + x_speed)
+            observation_.append(observation1[1] + y_speed)
+            reward = compute_reward(observation_, x, y)
+            all_reward.append(reward)
+            print("step", count)
+            print("reward", reward)
+            # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
+            # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
+            # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
+            #
+            print(observation, action, reward, observation_)
+            RL.store_transition(observation, action, [[reward]], observation_)  # 记忆存储
+            if (step > 100) and (step % 5 == 0):  # 学习更新神经网络
+                RL.learn()
+                print("进入学习")
+                observation = [observation_]
+                print("obob", observation)
+                count += 1
+            if len(observation_)==0:
+                observation_.append(0)
+                observation_.append(0)
+            print("ob_",observation_)
+            if observation_[0]<0 or observation_[1]<0 or observation_[0]>100 or observation[1]>100:
+                break
+
+            step += 1
+            print("step-----------", step)
+
+        import matplotlib.pyplot as plt
+        plt.plot(all_reward)
+        plt.show()
+
+
 def run_maze(env):
     total_step = 6000
     step = 0
@@ -74,7 +124,8 @@ if __name__ == "__main__":
                       memory_size=2000,
                       # output_graph=True
                       )
-    run_maze(env)
+    #run_maze(env)
+    update(env)
     RL.plot_cost()
 
 #

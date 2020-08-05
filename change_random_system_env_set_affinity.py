@@ -110,9 +110,19 @@ def get_user_location(ENV_array):
 
 import math
 def  compute_reward(observation_,x,y):
+    # if observation_[0]<0 or observation_[1]<0 or observation_[0]>100 or observation_[1]>100:
+    #     reward = -1000
+    # else:
     reward = ((observation_[0]-x[0]) * (observation_[0]-x[0])  +  (observation_[1]-y[0])* (observation_[1]-y[0]) )
-    reward = math.sqrt(reward)
+    reward = -math.sqrt(reward)
     return reward
+
+
+def step_all(ob,x,y):
+    ob1=[]
+    ob1.append(ob[0]+x)
+    ob1.append(ob[1]+y)
+    return  ob1
 
 # print(get_user_location(ENV.creat_ENV()))
 

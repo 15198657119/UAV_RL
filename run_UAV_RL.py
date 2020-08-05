@@ -4,64 +4,59 @@ from change_random_system_env_set_affinity import *
 #from model_change_reward.data_classify import *
 import matplotlib.pyplot as plt
 from data_classify import text_save
-
 import numpy as np
 import time
 import random
 import os
 import sys
-
+from game_self import show1
 def run_maze(env):
     step = 0
     ENV, x, y = get_user_location(env.creat_ENV())
 
-    while step < 1000000:
+    while step < 2000:
         env = env
         step1 = 0
         ENV = ENV
         x = x
         y = y
         #print(ENV,x,y)
-        observation = [[0, 0]]
-        observation1 = [0, 0]
-        ob=[0,0]
+        observation = [[0, 100]]
+        observation1=[0,100]
+
         all_reward = []
         count =0
-        while (count <20 and ob[0]<100 and  ob[1]<100 ) :  #
+        while True:  #
             action = RL.choose_action(step, observation)  # 强化学习，动作选择
             print("action", action)
+            #根据选择的动作映射出 x，y的飞行方向和速度
             x_speed, y_speed = env.get_action(action)
-            print(x_speed, observation[0])
-            observation_ = [0,0]
-            print( observation_[0],   observation1[0])
-            observation_[0]=(observation1[0] + x_speed)
-            observation_[1]=(observation1[1] + y_speed)
-            # observation_.append(observation1[0] + x_speed)
-            # observation_.append(observation1[1] + y_speed)
-            print("ob  x_speed y_speed",observation,x_speed,y_speed)
+            observation_ = step_all(observation1,x_speed,y_speed)
+            observation1 = observation_
+            show1(observation_,x_speed,y_speed)
+            print("ob  x_speed y_speed ob_",observation,x_speed,y_speed,observation_)
             reward = compute_reward(observation_, x, y)
-            reward= - reward
+
+            #当步数多余20时不满足退出，飞出限定区域不满足退出
+            if count>20 or observation_[0]>100 or observation_[1]>100  or observation_[0]<0 or observation_[1]<0 :
+                break
             all_reward.append(reward)
-            print("step", count)
-            print("reward", reward)
+
             # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
             # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
             # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
 
-            print(observation, action, reward, observation_)
+            print("memory",observation, action, reward, observation_)
             RL.store_transition(observation, action,[[reward]], observation_)
 
             if (step1 > 200) and (step1 % 5 == 0):
                 RL.learn()
             step1 +=1
             # swap observation
-            observation = observation_
-            observation1 = observation_
-            ob=observation
 
             count +=  1
             print("count",count)
-            observation = [observation]
+            observation = [observation_]
             all_reward.append(reward)
         step += 1
 
