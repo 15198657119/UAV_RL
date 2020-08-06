@@ -14,7 +14,7 @@ def run_maze(env):
     step = 0
     ENV, x, y = get_user_location(env.creat_ENV())
 
-    while step < 20000:
+    while step < 2000:
         env = env
         step1 = 0
         ENV = ENV

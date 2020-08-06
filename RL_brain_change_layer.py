@@ -175,8 +175,8 @@ class DeepQNetwork:
         #observation1 = tf.expand_dims(tf.squeeze(observation),0)
         #tf.to_float(observation1,name='ToFloat')
 
-        if step<18000:
-           self.epsilon=0.3 + 0.0000003*step
+        if step<1800:
+           self.epsilon=0.5 + 0.0002*step
         else :
             self.epsilon = 0.98
 

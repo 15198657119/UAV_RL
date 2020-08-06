@@ -115,8 +115,8 @@ def  compute_reward(observation_,x,y):
     # else:
     if (observation_[0] == x[0] and observation_[1] == y[0]):
         reward = 10000
-    elif ((x[0]-observation_[0]) <10 and (y[0]-observation_[1])<10) :
-        reward = 100
+    elif (abs(x[0]-observation_[0]) <10 and abs(y[0]-observation_[1])<10) :
+        reward = 1000
     elif observation_[0]>100 or observation_[1]>100  or observation_[0]<0 or observation_[1]<0 :
         reward = -10000
     else:
