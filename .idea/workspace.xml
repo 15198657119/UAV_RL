@@ -2,16 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ac3496c0-552d-409c-80c6-aee6b5e33eb0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/q_learning/RL.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/q_learning/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RL_brain_change_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/RL_brain_change_layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" beforeDir="false" afterPath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_self.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_self.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph1.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_UAV_RL.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_UAV_RL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_this_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_this_1.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -238,7 +232,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/change_random_system_env_set_affinity.py</url>
-          <line>178</line>
+          <line>185</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

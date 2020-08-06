@@ -14,7 +14,7 @@ def run_maze(env):
     step = 0
     ENV, x, y = get_user_location(env.creat_ENV())
 
-    while step < 2000:
+    while step < 20000:
         env = env
         step1 = 0
         ENV = ENV
@@ -36,15 +36,7 @@ def run_maze(env):
             show1(observation_,x_speed,y_speed)
             print("ob  x_speed y_speed ob_",observation,x_speed,y_speed,observation_)
             reward = compute_reward(observation_, x, y)
-
-            #当步数多余20时不满足退出，飞出限定区域不满足退出
-            if count>20 or observation_[0]>100 or observation_[1]>100  or observation_[0]<0 or observation_[1]<0 :
-                break
             all_reward.append(reward)
-
-            # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
-            # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
-            # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
 
             print("memory",observation, action, reward, observation_)
             RL.store_transition(observation, action,[[reward]], observation_)
@@ -57,7 +49,13 @@ def run_maze(env):
             count +=  1
             print("count",count)
             observation = [observation_]
-            all_reward.append(reward)
+            #当步数多余20时不满足退出，飞出限定区域不满足退出
+            if count>20 :
+                break
+            # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
+            # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
+            # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
+
         step += 1
 
 
