@@ -1,3 +1,7 @@
 /logs/events.out.tfevents.1596807778.lulu.local
 /.idea/other.xml
 /.idea/workspace.xml
+.idea/*
+.vscode
+venv
+logs
