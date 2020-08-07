@@ -1,8 +1,10 @@
 import numpy as np
+
 from env.Env import BaseEnv
 
 
 class UavTrajectoryEnv(BaseEnv):
+    __step = 0  # 操作步数记录
 
     def __init__(self, md_position,
                  start_point=(0, 0),
@@ -34,8 +36,8 @@ class UavTrajectoryEnv(BaseEnv):
         self.__tasks = np.random.randint(100, 200, size=(md_number, slot_number)) / 1024
         self.__md_positions = md_position
         self.__latency = latency
-        self.__n_user = md_number
-        self.__slots = slot_number
+        self.__md_number = md_number
+        self.__slot_number = slot_number
         self.__start_point = start_point
         self.__end_point = end_point
         self.__max_velocity = 15
@@ -52,7 +54,9 @@ class UavTrajectoryEnv(BaseEnv):
             2. 使用CVX计算UAV飞行轨迹
         :return:
         """
-        pass
+        self.__tasks = np.random.randint(100, 200, size=(self.__md_number, self.__slot_number)) / 1024
+
+        # 使用CVX计算UAV的轨迹等数据
 
     def sample(self):
         pass
@@ -63,4 +67,17 @@ class UavTrajectoryEnv(BaseEnv):
         :param action: Agent所采取的动作
         :return: (观察，奖励，是否成功等相关信息)
         """
-        pass
+        self.__step += 1  # 步数累加
+
+        if self.__step == self.__slot_number:
+            # 时间片终止
+            if action.position == 0:
+                # UAV如果到达了终点
+                done = True
+            else:
+                # UAV最后一个时间没有到达终点
+                done = False
+
+        # 根据当前的时间片和位置计算奖励值
+
+    pass
