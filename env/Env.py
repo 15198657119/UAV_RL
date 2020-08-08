@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import numpy as np
 
 
@@ -22,16 +24,12 @@ class BaseEnv(object):
         self.max_velocity = max_velocity
 
     def reset(self):
-        """
-        重置环境
-        :return:
-        """
         pass
 
     def step(self):
         pass
 
-    def sample(self):
+    def sample(self, n_sample=1):
         pass
 
 

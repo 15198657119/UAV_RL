@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 
@@ -24,7 +26,7 @@ class Solution:
 
     # md parameter
     __md_transmit_power = 1
-    __md_frequency = 50
+    __md_frequency = 100
     __md_storage = 1
     __md_number = 4
     __md_tasks = None
@@ -43,13 +45,6 @@ class Solution:
     __TK = 10
     __UAV_CA = 0.00375
 
-    def __init__(self, name='solution') -> None:
-        super().__init__()
-        self.__name = name
-
-    def solve(self):
-        pass
-
     def __init__(self, md_positions, tasks, slot_number, slot_length) -> None:
         super().__init__()
         self.__md_position = md_positions
@@ -59,12 +54,16 @@ class Solution:
         self.__latency = slot_length
         self.__md_tasks = tasks
 
+    def solve(self):
+        pass
+
     def uavFlyEnergy(self, velocity):
         '''
         uavFlyEnergy: 计算UAV的飞行能耗
 
             @velocity: UAV的速度向量
         '''
+        pass
 
     def Db2Dec(self, dB):
         '''
@@ -80,16 +79,20 @@ class Solution:
             @positions 维度为2*K
         '''
 
-        slot_numb = trajectory.shape[1]
+        slot_numb = self.__slot
         md_num = self.__md_number
 
         dis = np.zeros([md_num, slot_numb])
 
-        for i in range(0, slot_numb):
-            temp = np.repeat(trajectory[:, i], md_num)
-            temp = np.power(temp.reshape(2, md_num) - self.__md_position, 2)
-            temp = temp[1, :] + temp[0, :] + self.__height ** 2
-            dis[:, i] = np.sqrt(temp)
+        if slot_numb > 1:
+            for i in range(0, slot_numb):
+                temp = np.repeat(trajectory[:, i], md_num)
+                temp = np.power(temp.reshape(2, md_num) - self.__md_position, 2)
+                temp = temp[1, :] + temp[0, :] + self.__height ** 2
+                dis[:, i] = np.sqrt(temp)
+        else:
+            temp = np.repeat(trajectory, md_num).reshape(2, 10)
+
         return dis
 
     def DataRate(self, trajectory, band_portion):
@@ -228,3 +231,60 @@ class Solution:
         off = self.offloadingLatency(trajectory, bandwidth, task_type, task_portion, allocated_frequency)
 
         return np.maximum(loc, off)
+
+    def slotDistance(self, uav_position):
+        """
+
+        """
+        distanze = np.zeros(shape=(self.__md_number))
+        md_position = self.__md_position
+
+        temp = np.repeat(uav_position, self.__md_number).reshape(2, self.__md_number)
+        temp = self.__md_position - temp
+
+        for d in range(0, self.__md_number):
+            x = temp[0, d]
+            y = temp[1, d]
+
+            distanze[d] = math.sqrt(x ** 2 + y ** 2 + self.__height ** 2)
+        return distanze
+
+    def slotDataRate(self, p_uav, bandwidth):
+        distanze = self.slotDistance(p_uav)
+        channel_gain = self.__transmit_power * 1000
+        channel_gain = channel_gain * self.Db2Dec(self.__channel_power)
+        channel_gain = channel_gain / distanze
+
+        band = self.__bandwidth * bandwidth
+        denominator = (band * np.power(10, 6) * self.Db2Dec(self.__noise_pose))
+
+        rate = band * np.log2(1 + channel_gain / denominator)
+        return rate
+
+    def slotTranEnergy(self, task_size, task_portion, uav_position, bandwidth):
+        rate = self.slotDataRate(uav_position, bandwidth)
+        egy = self.__md_transmit_power * task_size * task_portion / rate
+        return egy.sum()
+
+    def slotDeviceEnergy(self, task_size, uav_position, task_type, offloading_portion, bandwidth):
+        """
+        mdEnergy 计算当前时间片MD的能耗和
+        @uav_position UAV当前位置
+        @task_type 卸载类型
+        @offloading_portion 卸载比例
+        @bandwidth 分配的带宽
+        @frequency 分配的CPU
+        """
+
+        e_cac = (1 - task_type) * (1 - offloading_portion) * task_size * self.__CA
+        e_cac = e_cac.sum()
+
+        e_exe = self.__ETA * self.__BITS * (self.__md_frequency ** 2)
+        e_exe = task_type * (1 - offloading_portion) * task_size * e_exe
+        e_exe = e_exe.sum()
+
+        e_trn = self.slotTranEnergy(task_size, offloading_portion, uav_position, bandwidth)
+
+        # e_trn_matrix, e_trn = self.mdTransmitionEnergy(uav_position, bandwidth, offloading_portion)
+
+        return (e_trn + e_cac + e_exe)

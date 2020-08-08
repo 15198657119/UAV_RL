@@ -36,7 +36,6 @@ class UavTrajectoryEnv(BaseEnv):
         """
 
         super().__init__(md_position, start_point, end_point, latency, md_number, slot_number, max_velocity)
-        self.__max_velocity = max_velocity
         self.__reward_radius = reward_radius
         self.__energy_reward_coefficient = energy_reward_coefficient,
         self.__trajectory_reward_coefficient = trajectory_reward_coefficient
@@ -51,10 +50,10 @@ class UavTrajectoryEnv(BaseEnv):
 
         action_space = []
 
-        for x in range(-1 * self.__max_velocity, self.__max_velocity):
-            for y in range(-1 * self.__max_velocity, self.__max_velocity):
+        for x in range(-1 * self.max_velocity, self.max_velocity):
+            for y in range(-1 * self.max_velocity, self.max_velocity):
                 val = sqrt(x ** 2 + y ** 2)
-                if val <= self.__max_velocity:
+                if val <= self.max_velocity:
                     action_space.append(Velocity(x, y, val))
 
         self.__action_space = ActionSet(action_space)
@@ -68,7 +67,7 @@ class UavTrajectoryEnv(BaseEnv):
             2. 使用CVX计算UAV飞行轨迹
         :return:
         """
-        self.__tasks = np.random.randint(100, 200, size=(self.__md_number, self.__slot_number)) / 1024
+        self.tasks = np.random.randint(100, 200, size=(self.md_number, self.slot_number)) / 1024
 
         # 使用CVX计算UAV的轨迹等数据
 
@@ -86,7 +85,7 @@ class UavTrajectoryEnv(BaseEnv):
         e_reward = 0
 
         self.__step += 1  # 步数累加
-        if self.__step == self.__slot_number:
+        if self.__step == self.slot_number:
             # 时间片终止
             if action.p_start == 0:
                 # UAV如果到达了终点
