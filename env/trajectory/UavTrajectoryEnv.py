@@ -1,6 +1,40 @@
+from collections import namedtuple
+from math import sqrt
+
 import numpy as np
 
 from env.Env import BaseEnv
+
+Velocity = namedtuple("velocity", ['x', 'y', 'val'])
+Action = namedtuple('action', ['p_start', 'p_end', 'velocity'])
+
+
+class ActionSet:
+
+    def __init__(self, set) -> None:
+        super().__init__()
+        self.__action_set = set
+
+    def sample(self, n_sample=1):
+        """
+            sample 对动作空间进行随机抽样
+
+            @n_sample 抽样的数量,默认为1个
+        """
+        import random
+        if n_sample == 1:
+            idx = random.randint(0, len(self.__action_set))
+            return self.__action_set[idx]
+        else:
+            sample = []
+            for i in range(n_sample):
+                idx = random.randint(0, len(self.__action_set))
+                sample.append(self.__action_set[idx])
+
+            return sample
+
+    def action_space(self):
+        return self.__action_set
 
 
 class UavTrajectoryEnv(BaseEnv):
@@ -47,6 +81,26 @@ class UavTrajectoryEnv(BaseEnv):
         self.__energy_reward_coefficient = energy_reward_coefficient,
         self.__trajectory_reward_coefficient = trajectory_reward_coefficient
 
+    def generate_action_space(self) -> ActionSet:
+        """
+        创建动作空间
+        """
+        # 单个时间片内可飞行的最大距离
+        # 假设飞行速度为矢量(x,y)，且在x/y轴的方向可正可负
+        # max_distance = self.__max_velocity * self.__latency
+
+        action_space = []
+
+        for x in range(-1 * self.__max_velocity, self.__max_velocity):
+            for y in range(-1 * self.__max_velocity, self.__max_velocity):
+                val = sqrt(x ** 2 + y ** 2)
+                if val <= self.__max_velocity:
+                    action_space.append(Velocity(x, y, val))
+
+        self.__action_space = action_space
+
+        return ActionSet(action_space)
+
     def reset(self):
         """
         重置环境：
@@ -61,17 +115,20 @@ class UavTrajectoryEnv(BaseEnv):
     def sample(self):
         pass
 
-    def step(self, action):
+    def step(self, action: Action):
         """
         环境对Agent的回应
         :param action: Agent所采取的动作
         :return: (观察，奖励，是否成功等相关信息)
         """
-        self.__step += 1  # 步数累加
+        done = False
+        t_reward = 0
+        e_reward = 0
 
+        self.__step += 1  # 步数累加
         if self.__step == self.__slot_number:
             # 时间片终止
-            if action.position == 0:
+            if action.p_start == 0:
                 # UAV如果到达了终点
                 done = True
             else:
@@ -80,4 +137,24 @@ class UavTrajectoryEnv(BaseEnv):
 
         # 根据当前的时间片和位置计算奖励值
 
-    pass
+        # 1. 判断约束条件是否满足
+        # 2. 计算能耗和轨迹奖励
+        # 3. 返回相关信息
+
+        observation = ()
+        info = ()
+
+        reward = self.__trajectory_reward_coefficient * t_reward + self.__energy_reward_coefficient * e_reward
+        return (done, observation, reward, info)
+
+
+if __name__ == '__main__':
+    K = 4
+    N = 20
+
+    md_positions = np.random.randint(low=0, high=100, size=(2, K))
+    env = UavTrajectoryEnv(md_positions)
+    actions = env.generate_action_space()
+    set = ActionSet(actions)
+
+    env.step(set.sample())
