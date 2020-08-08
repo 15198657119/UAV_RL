@@ -3,38 +3,7 @@ from math import sqrt
 
 import numpy as np
 
-from env.Env import BaseEnv
-
-Velocity = namedtuple("velocity", ['x', 'y', 'val'])
-Action = namedtuple('action', ['p_start', 'p_end', 'velocity'])
-
-
-class ActionSet:
-
-    def __init__(self, set) -> None:
-        super().__init__()
-        self.__action_set = set
-
-    def sample(self, n_sample=1):
-        """
-            sample 对动作空间进行随机抽样
-
-            @n_sample 抽样的数量,默认为1个
-        """
-        import random
-        if n_sample == 1:
-            idx = random.randint(0, len(self.__action_set))
-            return self.__action_set[idx]
-        else:
-            sample = []
-            for i in range(n_sample):
-                idx = random.randint(0, len(self.__action_set))
-                sample.append(self.__action_set[idx])
-
-            return sample
-
-    def action_space(self):
-        return self.__action_set
+from env.Env import BaseEnv, Velocity, ActionSet, Action
 
 
 class UavTrajectoryEnv(BaseEnv):
@@ -66,16 +35,7 @@ class UavTrajectoryEnv(BaseEnv):
         :param trajectory_reward_coefficient: 轨迹奖励权重
         """
 
-        super().__init__()
-        self.__tasks = np.random.randint(100, 200, size=(md_number, slot_number)) / 1024
-        self.__md_positions = md_position
-        self.__latency = latency
-        self.__md_number = md_number
-        self.__slot_number = slot_number
-        self.__start_point = start_point
-        self.__end_point = end_point
-        self.__max_velocity = 15
-
+        super().__init__(md_position, start_point, end_point, latency, md_number, slot_number, max_velocity)
         self.__max_velocity = max_velocity
         self.__reward_radius = reward_radius
         self.__energy_reward_coefficient = energy_reward_coefficient,
