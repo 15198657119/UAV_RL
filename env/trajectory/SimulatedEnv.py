@@ -124,8 +124,10 @@ class SimulatedEnv(BaseEnv):
         sol_offloading = self.offloading[:, self.__step - 1]
         sol_types = self.task_type[:, self.__step - 1]
 
-        action_end = action.p_end  # 时间到达点
-        action_vel = action.velocity  # 时间片速度
+        # action_end = action.p_end  # 时间到达点
+
+        # action_vel = action.velocity  # 时间片速度
+        # action_end = (action.position[0] + action_vel.x * self.latency, action.position[1] + action_vel.y * self.latency)
 
         self.__step += 1  # 步数累加
         if self.__step == self.slot_number:
@@ -138,27 +140,31 @@ class SimulatedEnv(BaseEnv):
                 done = False
 
         # 根据当前的时间片和位置计算奖励值
-        x = action.p_start[0]
-        y = action.p_start[1]
+        x = action.position[0]
+        y = action.position[1]
         x = x + action.velocity.x * self.latency
         y = y + action.velocity.y * self.latency
+
         observation = (x, y)
+        uav_position = np.array(observation)
 
         # 1. 判断约束条件是否满足 TODO
 
         # 2. 计算能耗和轨迹奖励
-        dis = np.linalg.norm(np.array(action_end) - sol_point, ord=1)
-        if dis <= self.__reward_radius:
-            # 时间片终点在范围内
-            t_reward = (self.__reward_radius - dis) / self.__reward_radius
-        else:
-            t_reward = 0
+        if 0 <= x <= 100 and 0 <= y <= 100:
+            energy = self.__solution.slotDeviceEnergy(sol_tasks, uav_position, sol_types, sol_offloading, sol_bandwidth)
+            e_reward = (1 - energy)
 
-        if 0 <= x <= 100 and 0 < y <= 100:
-            energy = self.__solution.slotDeviceEnergy(sol_tasks, sol_point, sol_types, sol_offloading, sol_bandwidth)
-            e_reward = (20 - energy) / 20
+            dis = np.linalg.norm(uav_position - sol_point, ord=1)
+            if dis <= self.__reward_radius:
+                # 时间片终点在范围内
+                t_reward = (self.__reward_radius - dis) / self.__reward_radius
+            else:
+                t_reward = 0
+
         else:
-            e_reward = 0
+            e_reward = -1
+            t_reward = -1
 
         # 3. 返回相关信息
 
@@ -171,7 +177,7 @@ if __name__ == '__main__':
     file_path = os.path.join(work_dir, 'data.csv')
     senv = SimulatedEnv(file_path)
 
-    v = senv.sample()
-    ps = (0, 0)
-    pe = (v.x * senv.latency, v.y * senv.latency)
-    print(senv.step(Action(velocity=v, p_start=(0, 0), p_end=pe)))
+    for i in range(0, 100):
+        v = senv.sample()
+        current_position = (0, 0)
+        print(senv.step(Action(velocity=v, position=current_position)))

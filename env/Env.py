@@ -34,7 +34,7 @@ class BaseEnv(object):
 
 
 Velocity = namedtuple("velocity", ['x', 'y', 'val'])
-Action = namedtuple('action', ['p_start', 'p_end', 'velocity'])
+Action = namedtuple('action', ['position', 'velocity'])
 
 
 class ActionSet:
@@ -51,7 +51,7 @@ class ActionSet:
         """
         import random
         if n_sample == 1:
-            idx = random.randint(0, len(self.__action_set))
+            idx = random.randint(0, len(self.__action_set) - 1)
             return self.__action_set[idx]
         else:
             sample = []
