@@ -97,9 +97,9 @@ class UavTrajectoryEnv(BaseEnv):
                 if val <= self.__max_velocity:
                     action_space.append(Velocity(x, y, val))
 
-        self.__action_space = action_space
+        self.__action_space = ActionSet(action_space)
 
-        return ActionSet(action_space)
+        return self.__action_space
 
     def reset(self):
         """
@@ -112,8 +112,8 @@ class UavTrajectoryEnv(BaseEnv):
 
         # 使用CVX计算UAV的轨迹等数据
 
-    def sample(self):
-        pass
+    def sample(self, n_sample=1):
+        self.__action_space.sample(n_sample)
 
     def step(self, action: Action):
         """
