@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RL_brain_change_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/RL_brain_change_layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" beforeDir="false" afterPath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dynamic_creat_ENV.py" beforeDir="false" afterPath="$PROJECT_DIR$/dynamic_creat_ENV.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_UAV_RL.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_UAV_RL.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,10 +35,11 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -59,7 +61,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.run_UAV_RL">
-    <configuration name="change_random_system_env_set_affinity" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Env" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="liwentao" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -67,11 +69,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/env" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/change_random_system_env_set_affinity.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/env/Env.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -167,10 +169,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.run_UAV_RL" />
+        <item itemvalue="Python.Env" />
         <item itemvalue="Python.graph1" />
         <item itemvalue="Python.game_self" />
         <item itemvalue="Python.run_this_1" />
-        <item itemvalue="Python.change_random_system_env_set_affinity" />
       </list>
     </recent_temporary>
   </component>

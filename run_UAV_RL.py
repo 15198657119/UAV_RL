@@ -9,15 +9,17 @@ import time
 import random
 import os
 import sys
+from Solution import *
 from game_self import show1
 def run_maze(env):
     step = 0
-    ENV, x, y = get_user_location(env.creat_ENV())
-
-    while step < 2000:
+    #ENV, x, y = get_user_location(env.creat_ENV())
+    x=[100]
+    y=[100]
+    while step < 10000:
         env = env
         step1 = 0
-        ENV = ENV
+        #ENV = ENV
         x = x
         y = y
         #print(ENV,x,y)
@@ -52,7 +54,9 @@ def run_maze(env):
             #当步数多余20时不满足退出，飞出限定区域不满足退出
             if count>20 :
                 break
-            # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
+            # if observation_[0] > 100 or observation_[1] > 100 or observation_[0] < 0 or observation_[1] < 0 :
+            #     break
+                # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
             # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
             # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
 

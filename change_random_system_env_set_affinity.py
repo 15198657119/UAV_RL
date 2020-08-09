@@ -55,7 +55,7 @@ class System_ENV(object):
         max_action_space = 351
         len = x_max_speed * y_max_speed
         if action == max_action_space:                         #x , y速度均为0  悬停
-            x_speed = max_action_space - 2
+            x_speed = max_action_space - 2.
             y_speed = max_action_space - 2
         elif action < len:                         #x y 轴均为正速度  x: 0-15m/s    y: 0-4m/s
             x_speed = int (action / x_max_speed)
@@ -117,8 +117,8 @@ def  compute_reward(observation_,x,y):
         reward = 10000
     elif (abs(x[0]-observation_[0]) <10 and abs(y[0]-observation_[1])<10) :
         reward = 1000
-    elif observation_[0]>100 or observation_[1]>100  or observation_[0]<0 or observation_[1]<0 :
-        reward = -10000
+    # elif observation_[0]<100 and observation_[1]<100  and observation_[0]>0 and observation_[1]>0 :
+    #     reward = 100
     else:
         reward = ((observation_[0]-x[0]) * (observation_[0]-x[0])  +  (observation_[1]-y[0])* (observation_[1]-y[0]) )
         reward = -math.sqrt(reward)
