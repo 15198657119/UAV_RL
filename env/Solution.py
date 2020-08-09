@@ -6,8 +6,8 @@ import numpy as np
 class Solution:
     __bandwidth = 10
     __storage = 50
-    __energy_budget = 10 ^ 6
-    __frequency = 5 * 10 ^ 3
+    __energy_budget = 10 ** 6
+    __frequency = 5 * 10 ** 3
     __channel_power = -50
     __noise_pose = -130
     __transmit_power = 1
@@ -55,14 +55,6 @@ class Solution:
         self.__md_tasks = tasks
 
     def solve(self):
-        pass
-
-    def uavFlyEnergy(self, velocity):
-        '''
-        uavFlyEnergy: 计算UAV的飞行能耗
-
-            @velocity: UAV的速度向量
-        '''
         pass
 
     def Db2Dec(self, dB):
@@ -195,7 +187,7 @@ class Solution:
 
             @return(latency) 本地处理时延矩阵
         """
-        task_type * (1 - task_offloading_portion) * self.__md_tasks * self.__BITS
+        task_type * (1 - task_offloading_portion) * self.__md_tasks * self.__BITS / self.__md_frequency
 
     def offloadingLatency(self, trajectory, bandwidth, task_type, task_portion, allocated_frequency):
         """
@@ -288,3 +280,31 @@ class Solution:
         # e_trn_matrix, e_trn = self.mdTransmitionEnergy(uav_position, bandwidth, offloading_portion)
 
         return (e_trn + e_cac + e_exe)
+
+    def slotLocalLatency(self, task_size, task_type, offloading_portion):
+        latency = task_type * (1 - offloading_portion) * task_size * self.__BITS / self.__md_frequency
+        return latency
+
+    def slotOffloadingLatency(self, task_size, uav_position, bandwidth, task_type, task_portion, allocated_frequency):
+        rate = self.slotDataRate(uav_position, bandwidth)
+        latency_trn = task_size * task_portion / rate
+        latency_exe = task_type * task_size * task_portion * self.__BITS / allocated_frequency
+        return latency_exe + latency_trn
+
+    def slotLatency(self, task_size, uav_position, bandwidth, task_type, task_portion, allocated_frequency):
+        loc = self.slotLocalLatency(task_size, task_type, task_portion)
+        off = self.slotOffloadingLatency(task_size, uav_position, bandwidth, task_type, task_portion,
+                                         allocated_frequency)
+
+        return np.maximum(loc, off)
+
+    def isUnderLatencyConstraint(self, task_size, uav_position, bandwidth, task_type, task_portion,
+                                 allocated_frequency):
+        latency = self.slotLatency(task_size, uav_position, bandwidth, task_type, task_portion, allocated_frequency)
+        latency = (latency <= self.__latency)
+        return latency
+
+    def isUnderFrequencyConstraint(self, task_type, allocated_frequency):
+        total = task_type * allocated_frequency
+        total = total.sum()
+        return total <= self.__frequency

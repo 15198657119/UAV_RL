@@ -1,7 +1,7 @@
 import os
 from math import sqrt
 
-from env.Env import BaseEnv, ActionSet, Velocity, Action
+from env.Env import BaseEnv, ActionSet, Velocity, Action, Observation
 import pandas as pd
 import numpy as np
 
@@ -15,7 +15,7 @@ class SimulatedEnv(BaseEnv):
                  start_point=(0, 0),
                  end_point=(100, 0),
                  latency=0.5,
-                 md_number=10,
+                 md_number=6,
                  slot_number=20,
                  max_velocity=15,
                  reward_radius=5,
@@ -150,6 +150,18 @@ class SimulatedEnv(BaseEnv):
         uav_position = np.array((x, y))
 
         # 1. 判断约束条件是否满足 TODO
+        # 是否满足时间片时延约束
+        isUnderLatencyConstraint = self.__solution.isUnderLatencyConstraint(sol_tasks, uav_position, sol_bandwidth,
+                                                                            sol_types, sol_offloading,
+                                                                            sol_frequency)
+        # 是否满足CPU频率约束
+        isUnderFrequencyConstraint = self.__solution.isUnderFrequencyConstraint(sol_types, sol_frequency)
+        rate = self.__solution.slotDataRate(uav_position, sol_bandwidth)
+        task_latency = self.__solution.slotLatency(task_size=sol_tasks,
+                                                   uav_position=uav_position,
+                                                   bandwidth=sol_bandwidth, task_type=sol_types,
+                                                   task_portion=sol_offloading,
+                                                   allocated_frequency=sol_frequency)
 
         # 2. 计算能耗和轨迹奖励
         if 0 <= x <= 100 and 0 <= y <= 100:
@@ -168,20 +180,24 @@ class SimulatedEnv(BaseEnv):
             t_reward = -1
 
         # 3. 返回相关信息
+        observation = Observation(uav_position=uav_position, task_size=sol_tasks, data_rate=rate,
+                                  task_latency=task_latency,
+                                  constraints=(isUnderLatencyConstraint, isUnderFrequencyConstraint))
+
         reward = 0.2 * t_reward + 0.8 * e_reward
 
-        return (done, reward)
+        return (done, observation, reward)
 
 
 if __name__ == '__main__':
     work_dir = '/Users/yulu/workspace/UAV_RL/data'
-    file_path = os.path.join(work_dir, 'data.csv')
+    file_path = os.path.join(work_dir, 'data_1.csv')
     senv = SimulatedEnv(file_path)
 
-    # for i in range(0, 20):
-    #     v = senv.sample()
-    #     current_position = (0, 0)
-    #     print(senv.step(Action(velocity=v, position=current_position)))
+    for i in range(0, 20):
+        v = senv.sample()
+        current_position = (0, 0)
+        print(senv.step(Action(velocity=v, position=current_position)))
     #
     # from itertools import product
     #

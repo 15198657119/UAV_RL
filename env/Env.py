@@ -4,7 +4,7 @@ import numpy as np
 
 Velocity = namedtuple("velocity", ['x', 'y', 'val'])
 Action = namedtuple('action', ['position', 'velocity'])
-Observation = namedtuple('observation', ['uav_position', 'md_task_size', 'data_rate', 'constraints'])
+Observation = namedtuple('observation', ['uav_position', 'task_size', 'data_rate', 'task_latency', 'constraints'])
 
 
 class BaseEnv(object):
