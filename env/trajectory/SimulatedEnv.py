@@ -21,12 +21,22 @@ class SimulatedEnv(BaseEnv):
                  reward_radius=5,
                  energy_reward_coefficient=0.8,
                  trajectory_reward_coefficient=0.2) -> None:
+        super().__init__(start_point, end_point, latency, md_number, slot_number, max_velocity)
+        self.__load_csv_data(filepath, md_number, slot_number)
 
-        self.__step = 0
+        self.__step = -1
         self.__action_space = []
+        self.__trajectory = pd.DataFrame(np.zeros(shape=(2, slot_number)))
+
         self.__reward_radius = reward_radius
         self.__energy_reward_coefficient = energy_reward_coefficient,
         self.__trajectory_reward_coefficient = trajectory_reward_coefficient
+
+        # 模拟求解,生成动作空间
+        self.__solution = Solution(self.md_position, self.tasks, slot_number, latency)
+        self.__generate_action_space()
+
+    def __load_csv_data(self, filepath, md_number, slot_number):
         self.data = pd.read_csv(filepath, header=None)
         row = np.random.randint(0, 9)
         # MD Position
@@ -34,7 +44,6 @@ class SimulatedEnv(BaseEnv):
         idx_e = (2 * md_number - 1)
         vals = self.data.loc[row, idx_s:idx_e].values
         self.md_position = np.reshape(vals, (2, md_number), order="F")
-        super().__init__(start_point, end_point, latency, md_number, slot_number, max_velocity)
 
         # MD Tasks Matrix
         idx_s = idx_e + 1
@@ -73,11 +82,6 @@ class SimulatedEnv(BaseEnv):
         idx_e = idx_e + md_number * slot_number
         self.offloading = np.reshape(self.data.loc[row, idx_s:idx_e].values, (md_number, slot_number), order="F")
 
-        self.__solution = Solution(self.md_position, self.tasks, slot_number, latency)
-
-        # print(self.offloading)
-        self.__generate_action_space()
-
     def __generate_action_space(self) -> ActionSet:
         """
         创建动作空间
@@ -110,43 +114,40 @@ class SimulatedEnv(BaseEnv):
         :param action: Agent所采取的动作
         :return: (观察，奖励，是否成功等相关信息)
         """
-        self.__step = 1
         done = False
         t_reward = 0
         e_reward = 0
         t_ce = self.__trajectory_reward_coefficient
         e_ce = self.__energy_reward_coefficient
 
+        print(self.__step)
+        if self.__step < self.slot_number - 1:
+            self.__step += 1  # 步数累加, 以slot_number数量作为一个周期
+        else:
+            self.__step = 0
+            raise Exception('超出步数')
+
+        # 加载对应时间片数据
         sol_point = self.trajectory[:, self.__step]
-        sol_tasks = self.tasks[:, self.__step - 1]
-        sol_bandwidth = self.bandwidth[:, self.__step - 1]
-        sol_frequency = self.frequency[:, self.__step - 1]
-        sol_offloading = self.offloading[:, self.__step - 1]
-        sol_types = self.task_type[:, self.__step - 1]
-
-        # action_end = action.p_end  # 时间到达点
-
-        # action_vel = action.velocity  # 时间片速度
-        # action_end = (action.position[0] + action_vel.x * self.latency, action.position[1] + action_vel.y * self.latency)
-
-        self.__step += 1  # 步数累加
-        if self.__step == self.slot_number:
-            # 时间片终止
-            if action.p_start == 0:
-                # UAV如果到达了终点
-                done = True
-            else:
-                # UAV最后一个时间没有到达终点
-                done = False
+        sol_tasks = self.tasks[:, self.__step]
+        sol_bandwidth = self.bandwidth[:, self.__step]
+        sol_frequency = self.frequency[:, self.__step]
+        sol_offloading = self.offloading[:, self.__step]
+        sol_types = self.task_type[:, self.__step]
 
         # 根据当前的时间片和位置计算奖励值
         x = action.position[0]
         y = action.position[1]
         x = x + action.velocity.x * self.latency
         y = y + action.velocity.y * self.latency
+        # action_vel = action.velocity  # 时间片速度
+        # action_end = (action.position[0] + action_vel.x * self.latency, action.position[1] + action_vel.y * self.latency)
 
-        observation = (x, y)
-        uav_position = np.array(observation)
+        # 时间片终止
+        if self.__step == (self.slot_number - 1) and x == self.end_point[0] and y == self.end_point[1]:  # UAV到达了终点
+            done = True
+
+        uav_position = np.array((x, y))
 
         # 1. 判断约束条件是否满足 TODO
 
@@ -167,9 +168,9 @@ class SimulatedEnv(BaseEnv):
             t_reward = -1
 
         # 3. 返回相关信息
-
         reward = 0.2 * t_reward + 0.8 * e_reward
-        return (done, observation, reward)
+
+        return (done, reward)
 
 
 if __name__ == '__main__':
@@ -177,7 +178,12 @@ if __name__ == '__main__':
     file_path = os.path.join(work_dir, 'data.csv')
     senv = SimulatedEnv(file_path)
 
-    for i in range(0, 100):
-        v = senv.sample()
-        current_position = (0, 0)
-        print(senv.step(Action(velocity=v, position=current_position)))
+    # for i in range(0, 20):
+    #     v = senv.sample()
+    #     current_position = (0, 0)
+    #     print(senv.step(Action(velocity=v, position=current_position)))
+    #
+    # from itertools import product
+    #
+    # lst = np.zeros(shape=(10, 2 ** 10))
+    # lst = list(product([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], repeat=10))

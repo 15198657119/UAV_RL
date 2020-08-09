@@ -2,6 +2,10 @@ from collections import namedtuple
 
 import numpy as np
 
+Velocity = namedtuple("velocity", ['x', 'y', 'val'])
+Action = namedtuple('action', ['position', 'velocity'])
+Observation = namedtuple('observation', ['uav_position', 'md_task_size', 'data_rate', 'constraints'])
+
 
 class BaseEnv(object):
     def __init__(self, start_point=(0, 0), end_point=(100, 0), latency=0.5, md_number=4, slot_number=20,
@@ -24,10 +28,6 @@ class BaseEnv(object):
 
     def sample(self, n_sample=1):
         pass
-
-
-Velocity = namedtuple("velocity", ['x', 'y', 'val'])
-Action = namedtuple('action', ['position', 'velocity'])
 
 
 class ActionSet:
