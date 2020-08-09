@@ -35,7 +35,8 @@ class UavTrajectoryEnv(BaseEnv):
         :param trajectory_reward_coefficient: 轨迹奖励权重
         """
 
-        super().__init__(md_position, start_point, end_point, latency, md_number, slot_number, max_velocity)
+        super().__init__(start_point, end_point, latency, md_number, slot_number, max_velocity)
+        self.md_position = md_position
         self.__reward_radius = reward_radius
         self.__energy_reward_coefficient = energy_reward_coefficient,
         self.__trajectory_reward_coefficient = trajectory_reward_coefficient

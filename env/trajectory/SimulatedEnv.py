@@ -33,8 +33,8 @@ class SimulatedEnv(BaseEnv):
         idx_s = 0
         idx_e = (2 * md_number - 1)
         vals = self.data.loc[row, idx_s:idx_e].values
-        md_position = np.reshape(vals, (2, md_number), order="F")
-        super().__init__(md_position, start_point, end_point, latency, md_number, slot_number, max_velocity)
+        self.md_position = np.reshape(vals, (2, md_number), order="F")
+        super().__init__(start_point, end_point, latency, md_number, slot_number, max_velocity)
 
         # MD Tasks Matrix
         idx_s = idx_e + 1

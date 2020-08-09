@@ -4,23 +4,16 @@ import numpy as np
 
 
 class BaseEnv(object):
-    def __init__(self,
-                 md_position,
-                 start_point=(0, 0),
-                 end_point=(100, 0),
-                 latency=0.5,
-                 md_number=4,
-                 slot_number=20,
-                 max_velocity=15, ) -> None:
+    def __init__(self, start_point=(0, 0), end_point=(100, 0), latency=0.5, md_number=4, slot_number=20,
+                 max_velocity=15) -> None:
         super().__init__()
-        self.md_position = md_position
+
         self.tasks = np.random.randint(100, 200, size=(md_number, slot_number)) / 1024
         self.latency = latency
         self.md_number = md_number
         self.slot_number = slot_number
         self.start_point = start_point
         self.end_point = end_point
-
         self.max_velocity = max_velocity
 
     def reset(self):
