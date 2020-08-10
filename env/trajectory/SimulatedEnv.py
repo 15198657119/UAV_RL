@@ -186,7 +186,7 @@ class SimulatedEnv(BaseEnv):
 
         reward = 0.2 * t_reward + 0.8 * e_reward
 
-        return (done, observation, reward)
+        return (done, reward, observation)
 
 
 if __name__ == '__main__':
@@ -197,6 +197,8 @@ if __name__ == '__main__':
     for i in range(0, 20):
         v = senv.sample()
         current_position = (0, 0)
+
+
         print(senv.step(Action(velocity=v, position=current_position)))
     #
     # from itertools import product
