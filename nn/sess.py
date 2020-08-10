@@ -1,14 +1,20 @@
-import tensorflow as tf
+from itertools import permutations
+from itertools import combinations
+from itertools import product
 
-matrix1 = tf.constant([[3, 3]])
-matrix2 = tf.constant([[2], [2]])
+# print(list(permutations(range(300))))
+# print(list(combinations([1, 0, 1], r=1)))
+import numpy as np
 
-product = tf.matmul(matrix1, matrix2)
+type = list(product(range(2), repeat=6))
+print(type)
+s = ('a', 'b', 'c')
 
-sess = tf.Session()
-res = sess.run(product)
-print(res)
-sess.close()
+# print(type)
 
-with tf.Session() as sess:
-    print(sess.run(product))
+sets = []
+for t in type:
+    for ss in s:
+        sets.append((t, ss))
+
+sets
