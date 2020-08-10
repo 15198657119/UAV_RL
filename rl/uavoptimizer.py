@@ -1,6 +1,5 @@
 from RL_brain_change_layer import DeepQNetwork
 from change_random_system_env_set_affinity import *
-# from model_change_reward.data_classify import *
 from env.Env import Action
 from game_self import show1
 import matplotlib.pyplot as plt
