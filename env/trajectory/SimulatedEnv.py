@@ -95,14 +95,23 @@ class SimulatedEnv(BaseEnv):
 
         a_space = []
 
+        # 生成md_number位数的0-1向量全组合
+        type = list(product(range(2), repeat=self.md_number))
+        t_space = []
+
         for x in range(0, self.max_velocity):
             for y in range(-1 * self.max_velocity, self.max_velocity):
                 val = sqrt(x ** 2 + y ** 2)
                 if val <= self.max_velocity:
+
                     a_space.append(Velocity(x, y, val))
 
-        self.n_action = len(a_space)
-        self.__action_space = ActionSet(a_space)
+                    # 将 速度空间和类型空间关联
+                    for t in type:
+                        t_space.append((x, y) + t)
+
+        self.n_action = len(t_space)
+        self.__action_space = ActionSet(t_space)
 
         return self.__action_space
 
@@ -215,7 +224,7 @@ class SimulatedEnv(BaseEnv):
 
 
 if __name__ == '__main__':
-    work_dir = 'C:\\Users\\86151\\Desktop\\liwentao\\data'
+    work_dir = '/Users/yulu/workspace/UAV_RL/data'
     file_path = os.path.join(work_dir, 'data_1.csv')
     senv = SimulatedEnv(file_path)
     for eps in range(300):
