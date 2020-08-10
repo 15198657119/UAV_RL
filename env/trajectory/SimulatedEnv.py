@@ -157,7 +157,6 @@ class SimulatedEnv(BaseEnv):
         x = x + action.velocity.x * self.latency
         y = y + action.velocity.y * self.latency
 
-
         # action_vel = action.velocity  # 时间片速度
         # action_end = (action.position[0] + action_vel.x * self.latency, action.position[1] + action_vel.y * self.latency)
 
@@ -186,17 +185,23 @@ class SimulatedEnv(BaseEnv):
             energy = self.__solution.slotDeviceEnergy(sol_tasks, action.position, sol_types, sol_offloading,
                                                       sol_bandwidth)
             e_reward = (1 - energy)
+            e_reward = e_reward * 100
 
             dis = np.linalg.norm(action.position - sol_point, ord=1)
             if dis <= self.__reward_radius:
                 # 时间片终点在范围内
                 t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                t_reward = t_reward * (self.__step + 90)
+                if self.__step == 18 and dis == 0:
+                    t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                    t_reward = t_reward * 10000
+
             else:
                 t_reward = 0
 
         else:
-            e_reward = -1
-            t_reward = -1
+            e_reward = -1000
+            t_reward = -1000
 
         # 3. 返回相关信息
         observation = np.array([])
