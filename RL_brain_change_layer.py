@@ -131,7 +131,7 @@ class DeepQNetwork:
             print(a)
             print(r)
             print(s_)
-        transition = np.hstack((s, [[a]],  r, [s_]))
+        transition = np.hstack((s, a,  r, s_))
         # replace the old memory with new memory
         index = self.memory_counter % self.memory_size
         self.memory[index, :] = transition
