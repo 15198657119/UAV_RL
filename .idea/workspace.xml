@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ac3496c0-552d-409c-80c6-aee6b5e33eb0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/run_UAV_RL_add_constrant.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RL_brain_change_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/RL_brain_change_layer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" beforeDir="false" afterPath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/env/trajectory/SimulatedEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/env/trajectory/SimulatedEnv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph1.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_UAV_RL.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_UAV_RL.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,7 +35,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../UAV_RL-master" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
