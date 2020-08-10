@@ -196,7 +196,7 @@ class SimulatedEnv(BaseEnv):
 
         reward = 0.2 * t_reward + 0.8 * e_reward
 
-        return (done, reward, observation)
+        return (done, reward, observation, uav_position)
 
 
 if __name__ == '__main__':
