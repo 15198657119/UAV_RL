@@ -39,7 +39,7 @@ class System_ENV(object):
         self.action_space = ["move","hover"]
         self.max_speed = max_speed
        # self.action_space = action_space
-        self.n_actions = 351 #定义动作空间大小为 （角度 * 无人机可用速度 + 悬停）
+        self.n_actions = 700 #定义动作空间大小为 （角度 * 无人机可用速度 + 悬停）
         self.n_features = n_feature
         self.array_depth = array_depth
         self.ENV = np.zeros((self.array_depth, self.array_depth))
@@ -55,7 +55,7 @@ class System_ENV(object):
         max_action_space = 351
         len = x_max_speed * y_max_speed
         if action == max_action_space:                         #x , y速度均为0  悬停
-            x_speed = max_action_space - 2
+            x_speed = max_action_space - 2.
             y_speed = max_action_space - 2
         elif action < len:                         #x y 轴均为正速度  x: 0-15m/s    y: 0-4m/s
             x_speed = int (action / x_max_speed)
@@ -77,6 +77,15 @@ class System_ENV(object):
             x_speed = -(action % x_max_speed)-4
         return x_speed+2,y_speed+2
 
+    def getaction1(self,num):
+        a_space = []
+        max_velocity = 15
+        for x in range(-1 * max_velocity, max_velocity):
+            for y in range(-1 * max_velocity, max_velocity):
+                val = math.sqrt(x ** 2 + y ** 2)
+                if val <= max_velocity:
+                    a_space.append([x,y])
+        return a_space[num][0],a_space[num][1]
     def rander(self):
         return self.ENV
 
@@ -88,9 +97,8 @@ class System_ENV(object):
         return 0
 
 
-# ENV=System_ENV(100,20,15)
-# for i in range(350):
-#     if i ==140:
+# ENV=System_ENV(10,10,10)
+# print(ENV.getaction1(700))
 #         print("######################################################################################################## ")
 #     print(ENV.get_action(i))
 
@@ -113,12 +121,24 @@ def  compute_reward(observation_,x,y):
     # if observation_[0]<0 or observation_[1]<0 or observation_[0]>100 or observation_[1]>100:
     #     reward = -1000
     # else:
-    if (observation_[0] == x[0] and observation_[1] == y[0]):
+    if (observation_[0] == 100 and observation_[1] == 100):
+        reward = 100000
+    elif (abs(100-observation_[0]) <10 and abs(100-observation_[1])<10) :
         reward = 10000
-    elif (abs(x[0]-observation_[0]) <10 and abs(y[0]-observation_[1])<10) :
+    elif (abs(100-observation_[0]) <20 and abs(100-observation_[1])<20) :
         reward = 1000
-    elif observation_[0]>100 or observation_[1]>100  or observation_[0]<0 or observation_[1]<0 :
-        reward = -10000
+    elif (abs(100-observation_[0]) <30 and abs(100-observation_[1])<30) :
+        reward = 100
+    elif (abs(100 - observation_[0]) < 40 and abs(100 - observation_[1]) < 40):
+        reward = 10
+    elif (abs(100 - observation_[0]) < 50 and abs(100 - observation_[1]) < 50):
+        reward = 0
+    # elif (abs(x[0]-observation_[0]) <0 and 0<observation_[1]  and observation_[1]<100) :
+    #     reward = 100
+    # elif (abs(x[0]-observation_[0]) <10 and 0<observation_[1]  and observation_[1]<100) :
+    #     reward = 100
+    elif observation_[0]>100 or observation_[1]>100  :
+        reward = -1000
     else:
         reward = ((observation_[0]-x[0]) * (observation_[0]-x[0])  +  (observation_[1]-y[0])* (observation_[1]-y[0]) )
         reward = -math.sqrt(reward)

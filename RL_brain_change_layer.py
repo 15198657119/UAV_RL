@@ -131,7 +131,7 @@ class DeepQNetwork:
             print(a)
             print(r)
             print(s_)
-        transition = np.hstack((s, [[a]],  r, [s_]))
+        transition = np.hstack((s, a,  r, s_))
         # replace the old memory with new memory
         index = self.memory_counter % self.memory_size
         self.memory[index, :] = transition
@@ -175,10 +175,10 @@ class DeepQNetwork:
         #observation1 = tf.expand_dims(tf.squeeze(observation),0)
         #tf.to_float(observation1,name='ToFloat')
 
-        if step<1800:
-           self.epsilon=0.5 + 0.0002*step
+        if step<8000:
+           self.epsilon=0.5 + 0.00004*step
         else :
-            self.epsilon = 0.98
+            self.epsilon = 0.1
 
 
         if np.random.uniform() < self.epsilon:

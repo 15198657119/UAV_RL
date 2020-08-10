@@ -15,7 +15,6 @@ from Solution import *
 
 from game_self import show1
 
-
 def run_maze(env):
     step = 0
     #ENV, x, y = get_user_location(env.creat_ENV())

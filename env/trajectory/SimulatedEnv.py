@@ -24,7 +24,8 @@ class SimulatedEnv(BaseEnv):
                  trajectory_reward_coefficient=0.2) -> None:
         super().__init__(start_point, end_point, latency, md_number, slot_number, max_velocity)
         self.__load_csv_data(filepath, md_number, slot_number)
-
+        self.n_action = 0
+        self.n_features = 27
         self.__step = -1
         self.__action_space = []
         self.__trajectory = pd.DataFrame(np.zeros(shape=(2, slot_number)))
@@ -94,12 +95,13 @@ class SimulatedEnv(BaseEnv):
 
         a_space = []
 
-        for x in range(-1 * self.max_velocity, self.max_velocity):
+        for x in range(0, self.max_velocity):
             for y in range(-1 * self.max_velocity, self.max_velocity):
                 val = sqrt(x ** 2 + y ** 2)
                 if val <= self.max_velocity:
                     a_space.append(Velocity(x, y, val))
 
+        self.n_action = len(a_space)
         self.__action_space = ActionSet(a_space)
 
         return self.__action_space
@@ -107,11 +109,19 @@ class SimulatedEnv(BaseEnv):
     def get_action_space(self):
         return self.__action_space
 
+    def doAction(self, idx):
+        set = self.__action_space.action_space()
+
+        return set[idx]
+
     def __generate_task_types(self, md_number):
         pro = product(np.zeros(md_number), repeat=md_number)
 
     def sample(self, n_sample=1):
         return self.__action_space.sample(n_sample)
+
+    def close(self):
+        self.__step = -1
 
     def step(self, action: Action):
         """
@@ -141,10 +151,13 @@ class SimulatedEnv(BaseEnv):
         sol_types = self.task_type[:, self.__step]
 
         # 根据当前的时间片和位置计算奖励值
+        # x,y为时间片终点位置
         x = action.position[0]
         y = action.position[1]
         x = x + action.velocity.x * self.latency
         y = y + action.velocity.y * self.latency
+
+
         # action_vel = action.velocity  # 时间片速度
         # action_end = (action.position[0] + action_vel.x * self.latency, action.position[1] + action_vel.y * self.latency)
 
@@ -156,24 +169,25 @@ class SimulatedEnv(BaseEnv):
 
         # 1. 判断约束条件是否满足 TODO
         # 是否满足时间片时延约束
-        isUnderLatencyConstraint = self.__solution.isUnderLatencyConstraint(sol_tasks, uav_position, sol_bandwidth,
+        isUnderLatencyConstraint = self.__solution.isUnderLatencyConstraint(sol_tasks, action.position, sol_bandwidth,
                                                                             sol_types, sol_offloading,
                                                                             sol_frequency)
         # 是否满足CPU频率约束
         isUnderFrequencyConstraint = self.__solution.isUnderFrequencyConstraint(sol_types, sol_frequency)
-        rate = self.__solution.slotDataRate(uav_position, sol_bandwidth)
+        rate = self.__solution.slotDataRate(action.position, sol_bandwidth)
         task_latency = self.__solution.slotLatency(task_size=sol_tasks,
-                                                   uav_position=uav_position,
+                                                   uav_position=action.position,
                                                    bandwidth=sol_bandwidth, task_type=sol_types,
                                                    task_portion=sol_offloading,
                                                    allocated_frequency=sol_frequency)
 
         # 2. 计算能耗和轨迹奖励
         if 0 <= x <= 100 and 0 <= y <= 100:
-            energy = self.__solution.slotDeviceEnergy(sol_tasks, uav_position, sol_types, sol_offloading, sol_bandwidth)
+            energy = self.__solution.slotDeviceEnergy(sol_tasks, action.position, sol_types, sol_offloading,
+                                                      sol_bandwidth)
             e_reward = (1 - energy)
 
-            dis = np.linalg.norm(uav_position - sol_point, ord=1)
+            dis = np.linalg.norm(action.position - sol_point, ord=1)
             if dis <= self.__reward_radius:
                 # 时间片终点在范围内
                 t_reward = (self.__reward_radius - dis) / self.__reward_radius
@@ -190,25 +204,20 @@ class SimulatedEnv(BaseEnv):
         for val in vals:
             observation = np.append(observation, val)
 
-        # observation = Observation(uav_position=uav_position, task_size=sol_tasks, data_rate=rate,
-        #                           task_latency=task_latency,
-        #                           constraints=(isUnderLatencyConstraint, isUnderFrequencyConstraint))
-
         reward = 0.2 * t_reward + 0.8 * e_reward
 
-        return (done, reward, observation, uav_position)
+        return (done, reward, observation.tolist(), uav_position)
 
 
 if __name__ == '__main__':
-    work_dir = '/Users/yulu/workspace/UAV_RL/data'
+    work_dir = 'C:\\Users\\86151\\Desktop\\liwentao\\data'
     file_path = os.path.join(work_dir, 'data_1.csv')
     senv = SimulatedEnv(file_path)
-
-    for i in range(0, 20):
-        v = senv.sample()
-        current_position = (0, 0)
-
-        print(senv.step(Action(velocity=v, position=current_position)))
+    for eps in range(300):
+        for i in range(0, 20):
+            v = senv.sample()
+            current_position = (0, 0)
+            print(senv.step(Action(velocity=v, position=current_position)))
     #
     # from itertools import product
     #

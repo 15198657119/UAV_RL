@@ -24,6 +24,7 @@ class SimulatedSolution(Solution):
 
 if __name__ == '__main__':
     work_dir = '/Users/yulu/workspace/UAV_RL/data'
+    work_dir = 'C:\\Users\\86151\\Desktop\\liwentao\\data'
     file_path = os.path.join(work_dir, 'data.csv')
     senv = SimulatedEnv(file_path)
 
