@@ -35,8 +35,45 @@ data = [  0.0000,   0.0000,   4.3493,   6.1102,   8.9117,  12.0630,  13.4940,
           45.4880,  58.2600,  41.9740,  64.6210,  38.0000,  70.9630,  33.9960,
           76.7740,  29.2540,  82.2540,  24.1340,  87.2000,  18.4960,  91.6810,
           12.4820,  95.8600,   6.2537, 100.0000,   0.0000]
+location=[0, 100, 5, 99, 10, 98, 15, 97, 2, 98, 7, 96, 2, 87, 11, 81, 16, 80, 23, 92, 33, 89, 30, 75, 37, 87, 48, 79, 55, 91, 56, 90, 62, 78, 58, 64, 65, 76, 72, 88   ]
+location1=[0, 100, 6, 88, 18, 83, 27, 72, 27, 81, 16, 71, 14, 83, 18, 97, 15, 91, 18, 89, 23, 82, 28, 88, 21, 87, 32, 85, 33, 86, 41, 79, 54, 81, 61, 93, 54, 83, 59, 78
+]
+location2=[0, 100, 9, 89, 11, 75, 8, 81, 20, 72, 33, 68, 22, 64, 10, 63, 16, 67, 21, 60, 25, 58, 19, 62, 24, 73, 32, 73, 41, 66, 46, 75, 53, 87, 46, 75, 56, 74, 63, 86
+]
 data_x=[]
 data_y=[]
+for i in range(len(location)):
+    if i%2==0:
+        data_x.append(location[i])
+    else:
+        data_y.append(location[i])
+import matplotlib.pyplot as plt
+plt.plot(data_x,data_y,label="predict")
+plt.show()
+
+data_x=[]
+data_y=[]
+for i in range(len(location1)):
+    if i%2==0:
+        data_x.append(location1[i])
+    else:
+        data_y.append(location1[i])
+import matplotlib.pyplot as plt
+plt.plot(data_x,data_y,label="predict")
+plt.show()
+
+data_x=[]
+data_y=[]
+for i in range(len(location2)):
+    if i%2==0:
+        data_x.append(location2[i])
+    else:
+        data_y.append(location2[i])
+import matplotlib.pyplot as plt
+plt.plot(data_x,data_y,label="predict")
+plt.show()
+
+
 data_x1=[]
 data_y2=[]
 for i in range(len(data)):

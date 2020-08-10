@@ -2,20 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ac3496c0-552d-409c-80c6-aee6b5e33eb0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data_1.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/liwentao.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RL_brain_change_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/RL_brain_change_layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" beforeDir="false" afterPath="$PROJECT_DIR$/change_random_system_env_set_affinity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/env/sol/SimulatedSolution.py" beforeDir="false" afterPath="$PROJECT_DIR$/env/sol/SimulatedSolution.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_self.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_self.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/env/trajectory/SimulatedEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/env/trajectory/SimulatedEnv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph1.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_UAV_RL.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_UAV_RL.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,7 +39,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../UAV_RL-master" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -70,7 +61,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.SimulatedSolution">
+  <component name="RunManager" selected="Python.run_UAV_RL">
+    <configuration name="SimulatedEnv" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="liwentao" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/env/trajectory" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/env/trajectory/SimulatedEnv.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="SimulatedSolution" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="liwentao" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -92,7 +104,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="game_self" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="change_random_system_env_set_affinity" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="liwentao" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -104,7 +116,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/game_self.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/change_random_system_env_set_affinity.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -155,34 +167,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run_this_1" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="liwentao" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run_this_1.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.SimulatedSolution" />
         <item itemvalue="Python.run_UAV_RL" />
         <item itemvalue="Python.graph1" />
-        <item itemvalue="Python.game_self" />
-        <item itemvalue="Python.run_this_1" />
+        <item itemvalue="Python.change_random_system_env_set_affinity" />
+        <item itemvalue="Python.SimulatedEnv" />
+        <item itemvalue="Python.SimulatedSolution" />
       </list>
     </recent_temporary>
   </component>
@@ -244,7 +235,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/change_random_system_env_set_affinity.py</url>
-          <line>185</line>
+          <line>205</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

@@ -190,14 +190,14 @@ class SimulatedEnv(BaseEnv):
 
 
 if __name__ == '__main__':
-    work_dir = '/Users/yulu/workspace/UAV_RL/data'
+    work_dir = 'C:\\Users\\86151\\Desktop\\liwentao\\data'
     file_path = os.path.join(work_dir, 'data_1.csv')
     senv = SimulatedEnv(file_path)
-
-    for i in range(0, 20):
-        v = senv.sample()
-        current_position = (0, 0)
-        print(senv.step(Action(velocity=v, position=current_position)))
+    for  eps in range(300):
+        for i in range(0, 20):
+            v = senv.sample()
+            current_position = (0, 0)
+            print(senv.step(Action(velocity=v, position=current_position)))
     #
     # from itertools import product
     #

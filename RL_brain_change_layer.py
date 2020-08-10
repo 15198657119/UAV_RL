@@ -176,9 +176,9 @@ class DeepQNetwork:
         #tf.to_float(observation1,name='ToFloat')
 
         if step<8000:
-           self.epsilon=0.5 + 0.00005*step
+           self.epsilon=0.5 + 0.00004*step
         else :
-            self.epsilon = 0.98
+            self.epsilon = 0.1
 
 
         if np.random.uniform() < self.epsilon:
