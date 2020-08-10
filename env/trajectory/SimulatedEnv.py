@@ -4,6 +4,7 @@ from math import sqrt
 from env.Env import BaseEnv, ActionSet, Velocity, Action, Observation
 import pandas as pd
 import numpy as np
+from itertools import product
 
 from env.Solution import Solution
 
@@ -38,7 +39,8 @@ class SimulatedEnv(BaseEnv):
 
     def __load_csv_data(self, filepath, md_number, slot_number):
         self.data = pd.read_csv(filepath, header=None)
-        row = np.random.randint(0, 9)
+        # row = np.random.randint(0, 9)
+        row = 0
         # MD Position
         idx_s = 0
         idx_e = (2 * md_number - 1)
@@ -104,6 +106,9 @@ class SimulatedEnv(BaseEnv):
 
     def get_action_space(self):
         return self.__action_space
+
+    def __generate_task_types(self, md_number):
+        pro = product(np.zeros(md_number), repeat=md_number)
 
     def sample(self, n_sample=1):
         return self.__action_space.sample(n_sample)
@@ -180,9 +185,14 @@ class SimulatedEnv(BaseEnv):
             t_reward = -1
 
         # 3. 返回相关信息
-        observation = Observation(uav_position=uav_position, task_size=sol_tasks, data_rate=rate,
-                                  task_latency=task_latency,
-                                  constraints=(isUnderLatencyConstraint, isUnderFrequencyConstraint))
+        observation = np.array([])
+        vals = (uav_position, sol_tasks, rate, task_latency, isUnderLatencyConstraint, isUnderFrequencyConstraint)
+        for val in vals:
+            observation = np.append(observation, val)
+
+        # observation = Observation(uav_position=uav_position, task_size=sol_tasks, data_rate=rate,
+        #                           task_latency=task_latency,
+        #                           constraints=(isUnderLatencyConstraint, isUnderFrequencyConstraint))
 
         reward = 0.2 * t_reward + 0.8 * e_reward
 
@@ -197,7 +207,6 @@ if __name__ == '__main__':
     for i in range(0, 20):
         v = senv.sample()
         current_position = (0, 0)
-
 
         print(senv.step(Action(velocity=v, position=current_position)))
     #
