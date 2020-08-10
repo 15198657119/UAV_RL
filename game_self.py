@@ -23,15 +23,15 @@ def refresh_env1():
     image3 = pygame.image.load("C:/Users/86151/Desktop/liwentao/Fonts/start.png").convert()
     return screen,image,image1,image2,image3
 
-def display(x,y): #刷新环境并显示
+def display(x,y,user_location_x,user_location_y): #刷新环境并显示
     plane_size =60
     home_size = 80
     start_label_size =50
     screen, image, image1, image2, image3 = refresh_env1()
-    user_location_x = [10,40,30,60]  #用户的x坐标位置
-    user_location_y = [55,20,30,70]  #用户的y坐标位置
+    # user_location_x = [10,40,30,60]  #用户的x坐标位置
+    # user_location_y = [55,20,30,70]  #用户的y坐标位置
     for i in range(len(user_location_x)):
-        screen.blit(pygame.transform.scale(image1, (home_size, home_size)), (user_location_x[i] * 10, user_location_y[i]))
+        screen.blit(pygame.transform.scale(image1, (home_size, home_size)), (user_location_x[i] * 10, user_location_y[i] * 10))
 
     pygame.display.set_caption('RL_UAV')
     screen.blit(pygame.transform.scale(image,(plane_size,plane_size)), (x, y))
@@ -178,12 +178,12 @@ import random
 #         refresh_env(x, y)
 # x=0
 # y=1000
-def show1(observation,x_speed,y_speed): #iu环境是1000*1000 ，所以动作 = 原始动作　＊　１０
+def show1(observation,x_speed,y_speed,user_location_x,user_location_y): #iu环境是1000*1000 ，所以动作 = 原始动作　＊　１０
     x = observation[0]*10+x_speed*10
     y=  observation[1]*10 + y_speed*10
     run = 1
     while run:
-        display(x, y)
+        display(x, y,user_location_x,user_location_y)
         run=0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

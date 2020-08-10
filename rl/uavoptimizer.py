@@ -46,8 +46,16 @@ def run_maze(env):
                 Action(position=uav_position, velocity=Velocity(x=x, y=y, val=math.sqrt(x ** 2 + y ** 2))))
             uav_x = uav_position
             observation1 = observation_
-            # print("uav_position",uav_position)
-            show1(uav_position.tolist(), x, y)
+
+            #获取用户位置
+            user_location_x=[]
+            user_location_y=[]
+            for i in range(len(env.md_position.tolist()[0])):
+                user_location_x.append(env.md_position.tolist()[0][i])
+                user_location_y.append(env.md_position.tolist()[1][i])
+
+            print("env.md_position",env.md_position.tolist())
+            show1(uav_position.tolist(), x, y,user_location_x,user_location_y)
             print("ob  x_speed y_speed ob_", observation, x, y, observation_)
             # reward = compute_reward(observation_, x, y)
             all_reward.append(reward)
