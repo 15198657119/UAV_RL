@@ -71,19 +71,18 @@ class Solution:
             @positions 维度为2*K
         '''
 
-        slot_numb = self.__slot
+        _, slot_numb = trajectory.shape
+
         md_num = self.__md_number
 
         dis = np.zeros([md_num, slot_numb])
+        mds = self.__md_position
 
-        if slot_numb > 1:
-            for i in range(0, slot_numb):
-                temp = np.repeat(trajectory[:, i], md_num)
-                temp = np.power(temp.reshape(2, md_num) - self.__md_position, 2)
-                temp = temp[1, :] + temp[0, :] + self.__height ** 2
-                dis[:, i] = np.sqrt(temp)
-        else:
-            temp = np.repeat(trajectory, md_num).reshape(2, 10)
+        for i in range(0, slot_numb):
+            temp = np.repeat(trajectory[:, i], md_num)
+            temp = np.power(temp.reshape(2, md_num) - mds, 2)
+            temp = temp[1, :] + temp[0, :] + self.__height ** 2
+            dis[:, i] = np.sqrt(temp)
 
         return dis
 
@@ -100,6 +99,9 @@ class Solution:
 
         band = self.__bandwidth * band_portion
         denominator = (band * np.power(10, 6) * self.Db2Dec(self.__noise_pose))
+
+        # band = band.reshape(self.__md_number, 1)
+        # denominator = denominator.reshape(self.__md_number, 1)
 
         rate = band * np.log2(1 + channel_gain / denominator)
         return rate
@@ -134,7 +136,7 @@ class Solution:
         tran_latency = self.__md_tasks * task_portion / rate
         return (self.__md_transmit_power * tran_latency, (tran_latency * self.__md_transmit_power).sum())
 
-    def uavCacheEnergy(self, task_type, task_offloading_portion):
+    def uavCacheEnergy(self, task_size, task_type, task_offloading_portion):
         """
             uavCacheEnergy 计算UAV的存储能耗
 
@@ -144,10 +146,10 @@ class Solution:
             @return (egy,egySum) 存储能耗矩阵，uav总存储能耗
         """
 
-        egy = self.__UAV_CA * (1 - task_type) * task_offloading_portion * self.__md_tasks
-        return (egy, egy.sum())
+        egy = self.__UAV_CA * (1 - task_type) * task_offloading_portion * task_size
+        return egy.sum(), egy
 
-    def uavComputingEnergy(self, task_type, task_offloading_portion, allocated_frequency):
+    def uavComputingEnergy(self, task_size, task_type, task_offloading_portion, allocated_frequency):
         """
             uavComputingEnergy 根据任务类型矩阵、任务卸载比例矩阵和分配的CPU矩阵计算UAV的计算能耗
             @task_type 任务处理类型矩阵 A
@@ -156,9 +158,9 @@ class Solution:
 
             @return (egy, egy.sum()) 各个任务的能耗和总能耗
         """
-        egy = task_type * self.__ETA * task_offloading_portion * self.__md_tasks * self.__BITS * (
+        egy = task_type * self.__ETA * task_offloading_portion * task_size * self.__BITS * (
                 allocated_frequency ** 2)
-        return (egy, egy.sum())
+        return egy.sum(), egy
 
     def uavFlyEnergy(self, velocity):
         """
@@ -168,13 +170,10 @@ class Solution:
             @return egy UAV飞行所消耗的能耗
         """
         egy = self.__blade_power * (1 + 3 * np.power(velocity, 2) / (self.__qtips ** 2))
-
-        temp = np.sqrt((1 + np.power(velocity, 4) / (4 * self.__hover_induced_velocity ** 4)))
-        egy = egy + self.__induced_power * (np.sqrt(temp, 0.5))
-
-        egy = egy + 0.5 * self.__fuselage_drag_ratio * self.__fuselage_rotor_solidity * self.__rotor_disc_aera * self.__rho * np.power(
-            velocity, 3)
-        egy = egy * (self.__latency * self.__slot)
+        temp = np.sqrt((1 + np.power(velocity, 4) / (4 * self.__hover_induced_velocity ** 4))) - (np.power(velocity, 2) / (2 * self.__hover_induced_velocity ** 2))
+        egy = self.__induced_power * (np.sqrt(temp)) + egy
+        egy = egy + 0.5 * self.__fuselage_drag_ratio * self.__fuselage_rotor_solidity * self.__rotor_disc_aera * self.__rho * np.power(velocity, 3)
+        egy = egy.sum() * (self.__latency * self.__slot)
 
         return egy
 
@@ -253,6 +252,21 @@ class Solution:
         rate = band * np.log2(1 + channel_gain / denominator)
         return rate
 
+    def infoDataRate(self, uav_position, bandwidth):
+        distanze = self.slotDistance(uav_position)
+        distanze = distanze.reshape(self.__md_number, 1)
+
+        channel_gain = self.__transmit_power * 1000
+        channel_gain = channel_gain * self.Db2Dec(self.__channel_power)
+        channel_gain = channel_gain / distanze
+
+        band = self.__bandwidth * bandwidth
+        denominator = (band * np.power(10, 6) * self.Db2Dec(self.__noise_pose))
+
+        rate = band * np.log2(1 + channel_gain / denominator)
+
+        return rate, distanze, channel_gain
+
     def slotTranEnergy(self, task_size, task_portion, uav_position, bandwidth):
         rate = self.slotDataRate(uav_position, bandwidth)
         egy = self.__md_transmit_power * task_size * task_portion / rate
@@ -267,6 +281,8 @@ class Solution:
         @bandwidth 分配的带宽
         @frequency 分配的CPU
         """
+        if offloading_portion is not np.ndarray:
+            offloading_portion = np.array(offloading_portion)
 
         e_cac = (1 - task_type) * (1 - offloading_portion) * task_size * self.__CA
         e_cac = e_cac.sum()
@@ -279,7 +295,7 @@ class Solution:
 
         # e_trn_matrix, e_trn = self.mdTransmitionEnergy(uav_position, bandwidth, offloading_portion)
 
-        return (e_trn + e_cac + e_exe)
+        return e_trn + e_cac + e_exe, e_trn, e_cac, e_exe
 
     def slotLocalLatency(self, task_size, task_type, offloading_portion):
         latency = task_type * (1 - offloading_portion) * task_size * self.__BITS / self.__md_frequency
@@ -300,11 +316,76 @@ class Solution:
 
     def isUnderLatencyConstraint(self, task_size, uav_position, bandwidth, task_type, task_portion,
                                  allocated_frequency):
-        latency = self.slotLatency(task_size, uav_position, bandwidth, task_type, task_portion, allocated_frequency)
-        latency = (latency <= self.__latency)
-        return latency
+
+        if uav_position is not np.ndarray:
+            uav_trajectory = np.array(uav_position).reshape(2, 1)
+
+        rate = self.DataRate(uav_trajectory, bandwidth)
+        latency_trn = task_size * task_portion / rate
+        latency_exe = task_type * task_portion * task_size * self.__BITS / allocated_frequency
+        off = latency_trn + latency_exe
+
+        loc = task_type * (1 - task_portion) * task_size * self.__BITS / self.__md_frequency
+
+        latency = np.maximum(off, loc)
+        latencyConstraint = (latency <= self.__latency)
+
+        return latencyConstraint, latency
 
     def isUnderFrequencyConstraint(self, task_type, allocated_frequency):
         total = task_type * allocated_frequency
         total = total.sum()
-        return total <= self.__frequency
+        frequencyConstraint = total <= self.__frequency
+        return frequencyConstraint, total
+
+    def isUnderMissionLatency(self, uav_trajectory, task_size, bandwidth, task_type, task_portion, allocated_frequency):
+        if uav_trajectory is not np.ndarray:
+            task_type = np.array(task_type).T
+            uav_trajectory = np.array(uav_trajectory).T
+
+        rate = self.DataRate(uav_trajectory, bandwidth)
+        latency_trn = task_size * task_portion / rate
+        latency_exe = task_type * task_portion * task_size * self.__BITS / allocated_frequency
+        off = latency_trn + latency_exe
+
+        loc = task_type * (1 - task_portion) * task_size * self.__BITS / self.__md_frequency
+        latency = np.maximum(off, loc)
+        # latency = latency
+        mission_latency = latency.sum(axis=1)
+
+        latencyConstraint = mission_latency <= self.__latency * self.__slot
+
+        return latencyConstraint, mission_latency
+
+    def isUnderUavStorage(self, uav_trajectory, task_size, bandwidth, task_type, task_portion, allocated_frequency):
+        if task_type is not np.ndarray:
+            task_type = np.array(task_type).T
+
+        n_tasks = (1 - task_type) * task_portion * task_size
+        n_total = n_tasks.sum()
+
+        return n_total <= self.__storage, n_total
+
+    def isUnderMdStorage(self, uav_trajectory, task_size, bandwidth, task_type, task_portion, allocated_frequency):
+        if task_type is not np.ndarray:
+            task_type = np.array(task_type).T
+
+        n_tasks = (1 - task_type) * (1 - task_portion) * task_size
+        n_total = n_tasks.sum(axis=1)
+
+        storageConstraint = n_total <= self.__md_storage
+        return storageConstraint, n_total
+
+    def isUnderUavEnergy(self, velocity, task_size, task_type, task_portion, allocated_frequency):
+        if task_type is not np.ndarray:
+            task_type = np.array(task_type).T
+            velocity = np.array(velocity).T
+
+        egy_exe, _ = self.uavComputingEnergy(task_size, task_type, task_portion, allocated_frequency)
+        egy_cac, _ = self.uavCacheEnergy(task_size, task_type, task_portion)
+        egy_fly = self.uavFlyEnergy(velocity)
+
+        egy_total = egy_cac + egy_exe + egy_fly
+        egyConstraint = egy_total <= self.__energy_budget
+
+        return egyConstraint, egy_total, egy_cac, egy_exe, egy_fly

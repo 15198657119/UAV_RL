@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from env.trajectory.SimulatedEnv import SimulatedEnv
 import os
 
+
 # os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
@@ -49,14 +50,14 @@ def run_maze(env):
             uav_x = uav_position
             observation1 = observation_
 
-            #获取用户位置
-            user_location_x=[]
-            user_location_y=[]
+            # 获取用户位置
+            user_location_x = []
+            user_location_y = []
             for i in range(len(env.md_position.tolist()[0])):
                 user_location_x.append(env.md_position.tolist()[0][i])
                 user_location_y.append(env.md_position.tolist()[1][i])
 
-            print("env.md_position",env.md_position.tolist())
+            # print("env.md_position", env.md_position.tolist())
             # show1(uav_position.tolist(), x, y,user_location_x,user_location_y)
             # print("ob  x_speed y_speed ob_", observation, x, y, observation_)
             # reward = compute_reward(observation_, x, y)
@@ -78,7 +79,7 @@ def run_maze(env):
                 0] > 100:
                 env.close()
 
-                if count > 18:
+                if done:
                     print(trajectory)
 
                 break
