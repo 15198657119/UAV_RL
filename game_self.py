@@ -42,10 +42,20 @@ def display(x,y,user_location_x,user_location_y): #刷新环境并显示
     # screen.blit(pygame.transform.scale(image1, (home_size,home_size)), (400, 300))
     # screen.blit(pygame.transform.scale(image1, (home_size, home_size)), (600, 40))
 
-    screen.blit(pygame.transform.scale(image2, (start_label_size, start_label_size)), (950, 0))
+    screen.blit(pygame.transform.scale(image2, (start_label_size, start_label_size)), (1000, 0))
     screen.blit(pygame.transform.scale(image3, (start_label_size, start_label_size)), (0 ,0))
     pygame.display.update()
 #
+def text_save(filename, data):#filename为写入CSV文件的路径，data为要写入数据列表.
+    file = open(filename,'a')
+    for i in range(len(data)):
+        s = str(data[i]).replace('[','').replace(']','')+"   "#去除[],这两行按数据不同，可以选择
+        #s = s.replace("'",' ').replace(',',' ')    #去除单引号，逗号，每行末尾追加换行符
+        file.write(s)
+    file.write("\n")
+    file.close()
+    print("保存文件成功")
+
 
 
 class HeroPlane(object):
@@ -180,7 +190,7 @@ import random
 # y=1000
 def show1(observation,x_speed,y_speed,user_location_x,user_location_y): #iu环境是1000*1000 ，所以动作 = 原始动作　＊　１０
     x = observation[0]*10+x_speed*10
-    y=  observation[1]*10 + y_speed*10
+    y =  observation[1]*10 + y_speed*10
     run = 1
     while run:
         display(x, y,user_location_x,user_location_y)

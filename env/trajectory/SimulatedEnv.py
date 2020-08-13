@@ -110,8 +110,12 @@ class SimulatedEnv(BaseEnv):
                     for t in type:
                         t_space.append((x, y) + t)
 
-        self.n_action = len(t_space)
-        self.__action_space = ActionSet(t_space)
+        # a_space 只有速度
+        # t_space 添加了类型
+        self.n_action = len(a_space)
+        self.__action_space = ActionSet(a_space)
+        # self.n_action = len(t_space)
+        # self.__action_space = ActionSet(t_space)
 
         return self.__action_space
 
@@ -132,7 +136,8 @@ class SimulatedEnv(BaseEnv):
     def close(self):
         self.__step = -1
 
-    def step(self, action: Action):
+    def \
+            step(self, action: Action):
         """
         环境对Agent的回应
         :param action: Agent所采取的动作
@@ -190,37 +195,77 @@ class SimulatedEnv(BaseEnv):
                                                    allocated_frequency=sol_frequency)
 
         # 2. 计算能耗和轨迹奖励
-        if 0 <= x <= 100 and 0 <= y <= 100:
-            energy = self.__solution.slotDeviceEnergy(sol_tasks, action.position, sol_types, sol_offloading,
-                                                      sol_bandwidth)
-            e_reward = (1 - energy)
-            e_reward = e_reward * 100
-
-            dis = np.linalg.norm(action.position - sol_point, ord=1)
-            if dis <= self.__reward_radius:
-                # 时间片终点在范围内
-                t_reward = (self.__reward_radius - dis) / self.__reward_radius
-                t_reward = t_reward * (self.__step + 90)
-                if self.__step == 18 and dis == 0:
-                    t_reward = (self.__reward_radius - dis) / self.__reward_radius
-                    t_reward = t_reward * 10000
-
-            else:
-                t_reward = 0
-
-        else:
-            e_reward = -1000
-            t_reward = -1000
-
-        # 3. 返回相关信息
+        #if 0 <= x <= 100 and 0 <= y <= 100:
+        #     energy = self.__solution.slotDeviceEnergy(sol_tasks, action.position, sol_types, sol_offloading,
+        #                                               sol_bandwidth)
+        #     e_reward = (1 - energy)
+        #     e_reward = e_reward * 100
+        #
+        #     dis = np.linalg.norm(action.position - sol_point, ord=1)
+        #     print("action.position - (100,0)",dis,self.__reward_radius,sol_point)
+        #     #if dis <= self.__reward_radius:
+        #     # if dis <= 50:
+        #     #     # 时间片终点在范围内
+        #     #     t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #     #     t_reward = t_reward * (self.__step + 90)
+        #     #     if self.__step == 18 and dis == 0:
+        #     #         t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #     #         t_reward = t_reward * 100000000000000
+        #     #     elif self.__step == 18 and abs(uav_position.tolist()[0]- 100) <= 10  and uav_position.tolist()[1]<=10:
+        #     #         t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #     #         t_reward = t_reward * 1000000000
+        #     #     elif self.__step == 18 and abs(uav_position.tolist()[0]- 100) <= 20  and uav_position.tolist()[1]<=20:
+        #     #         t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #     #         t_reward = t_reward * 10000
+        #     #     elif self.__step == 18 and abs(uav_position.tolist()[0]- 100) <= 30  and uav_position.tolist()[1]<=30:
+        #     #         t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #     #         t_reward = t_reward * 1000
+        #     #
+        #
+        #
+        #     if uav_position.tolist()[0] == 10 and uav_position.tolist()[1] == 0:
+        #         # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #         t_reward = 10000
+        #     elif abs(uav_position.tolist()[0] - 100) <= 10 and uav_position.tolist()[1] <= 10:
+        #         # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #         t_reward = 1000
+        #     elif abs(uav_position.tolist()[0] - 100) <= 30 and uav_position.tolist()[1] <= 30:
+        #         # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #         t_reward = 100
+        #     elif abs(uav_position.tolist()[0] - 100) <= 50 and uav_position.tolist()[1] <= 50:
+        #         # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+        #         t_reward = 10
+        #     else:
+        #         t_reward = 0
+        # else:
+        #     e_reward = -1000
+        #     t_reward = -1000
+        #
+        # # 3. 返回相关信息
         observation = np.array([])
         vals = (uav_position, sol_tasks, rate, task_latency, isUnderLatencyConstraint, isUnderFrequencyConstraint)
         for val in vals:
             observation = np.append(observation, val)
-
-        reward = 0.2 * t_reward + 0.8 * e_reward
-
-        return (done, reward, observation.tolist(), uav_position)
+        #
+        # #reward = 0.2 * t_reward + 0.8 * e_reward
+        # reward = 2 * t_reward
+        if 0 <= x <= 100 and 0 <= y <= 100:
+            if uav_position.tolist()[0] == 100\
+                    and uav_position.tolist()[1] == 0:
+                # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                t_reward = 10000
+            elif abs(uav_position.tolist()[0] - 100) <= 10 and uav_position.tolist()[1] <= 10:
+                # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                t_reward = 1000
+            elif abs(uav_position.tolist()[0] - 100) <= 30 and uav_position.tolist()[1] <= 30:
+                # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                t_reward = 100
+            elif abs(uav_position.tolist()[0] - 100) <= 50 and uav_position.tolist()[1] <= 50:
+                # t_reward = (self.__reward_radius - dis) / self.__reward_radius
+                t_reward = 10
+        else:
+            t_reward = -1000
+        return (done, t_reward, observation.tolist(), uav_position)
 
 
 if __name__ == '__main__':

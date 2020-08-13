@@ -2,7 +2,7 @@ from RL_brain_change_layer import DeepQNetwork
 from change_random_system_env_set_affinity import *
 # from model_change_reward.data_classify import *
 from env.Env import Action, Velocity
-from game_self import show1
+from game_self import show1,text_save
 import matplotlib.pyplot as plt
 from env.trajectory.SimulatedEnv import SimulatedEnv
 import os
@@ -27,8 +27,9 @@ def run_maze(env):
         print("step ", step)
 
         done, reward, observation, uav_position = env.step(Action(position=(0, 0), velocity=Velocity(x=0, y=0, val=0)))
-
+        print("reward------------------------",reward)
         trajectory = []
+        uav_location = []
         while True:  #
             trajectory.append(uav_position)
 
@@ -46,7 +47,7 @@ def run_maze(env):
                 Action(position=uav_position, velocity=Velocity(x=x, y=y, val=math.sqrt(x ** 2 + y ** 2))))
             uav_x = uav_position
             observation1 = observation_
-
+            print("reward --------------------------- ",reward)
             #获取用户位置
             user_location_x=[]
             user_location_y=[]
@@ -56,6 +57,11 @@ def run_maze(env):
 
             print("env.md_position",env.md_position.tolist())
             show1(uav_position.tolist(), x, y,user_location_x,user_location_y)
+
+            # 按 x ，y 依次存储uav轨迹
+            uav_location.append(uav_position.tolist()[0])
+            uav_location.append(uav_position.tolist()[1])
+
             print("ob  x_speed y_speed ob_", observation, x, y, observation_)
             # reward = compute_reward(observation_, x, y)
             all_reward.append(reward)
@@ -77,7 +83,9 @@ def run_maze(env):
                 env.close()
                 print(trajectory)
                 break
-            # text_save("data/data2/model_mean_yes_input_yes_f_c.txt", [np.mean(tem)]) #数据保存
+            if count >18 and (100-uav_position[0]<=5 and uav_position[1] <=5) :
+                text_save("uav_locvation.txt", uav_location) #数据保存
+                print("轨迹保存成功")
             # text_save("data/data2/model_max_yes_input_yes_f_c", [max(tem)])
             # text_save("data/data2/model_action_yes_input_yes_f_c.txt", [tem[int(core)]])
 
