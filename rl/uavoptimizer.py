@@ -8,6 +8,9 @@ from env.trajectory.SimulatedEnv import SimulatedEnv
 import os
 
 
+# os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
+
 def run_maze(env):
     step = 0
     RL = DeepQNetwork(env.n_action, env.n_features,
@@ -19,7 +22,7 @@ def run_maze(env):
                       output_graph=True
                       )
 
-    while step < 20000:
+    while step < 200000:
         step1 = 0
         all_reward = []
         count = 0
@@ -33,24 +36,29 @@ def run_maze(env):
         while True:  #
             trajectory.append(uav_position)
 
-            print("begin", observation)
+            # print("begin", observation)
             action = RL.choose_action(step, [observation])  # 强化学习，动作选择
-            print("action", action)
+            # print("action", action)
             # 根据选择的动作映射出 x，y的飞行方向和速度
             velocity = env.doAction(action)
-            x = velocity.x
-            y = velocity.y
-            v = velocity.val
+            x = velocity[0]
+            y = velocity[1]
+            # v = velocity.val
             # observation_ = step_all(observation1, x_speed, y_speed)
 
             done, reward, observation_, uav_position = env.step(
                 Action(position=uav_position, velocity=Velocity(x=x, y=y, val=math.sqrt(x ** 2 + y ** 2))))
             uav_x = uav_position
             observation1 = observation_
+
             print("reward --------------------------- ",reward)
             #获取用户位置
             user_location_x=[]
             user_location_y=[]
+            # 获取用户位置
+            user_location_x = []
+            user_location_y = []
+
             for i in range(len(env.md_position.tolist()[0])):
                 user_location_x.append(env.md_position.tolist()[0][i])
                 user_location_y.append(env.md_position.tolist()[1][i])
@@ -63,10 +71,15 @@ def run_maze(env):
             uav_location.append(uav_position.tolist()[1])
 
             print("ob  x_speed y_speed ob_", observation, x, y, observation_)
+
+            # print("env.md_position", env.md_position.tolist())
+            # show1(uav_position.tolist(), x, y,user_location_x,user_location_y)
+            # print("ob  x_speed y_speed ob_", observation, x, y, observation_)
+
             # reward = compute_reward(observation_, x, y)
             all_reward.append(reward)
 
-            print("memory", observation, action, reward, observation_)
+            # print("memory", observation, action, reward, observation_)
             RL.store_transition([observation], [[action]], [[reward]], [observation_])
 
             if (step1 > 200) and (step1 % 5 == 0):
@@ -75,13 +88,16 @@ def run_maze(env):
             # swap observation
 
             count += 1
-            print("count", count)
+            # print("count", count)
             observation = observation_
             # 当步数多余20时不满足退出，飞出限定区域不满足退出
             if count > 18 or uav_position[0] < 0 or uav_position[0] > 100 or uav_position[1] < 0 or uav_position[
                 0] > 100:
                 env.close()
-                print(trajectory)
+
+                if done:
+                    print(trajectory)
+
                 break
             if count >18 and (100-uav_position[0]<=5 and uav_position[1] <=5) :
                 text_save("uav_locvation.txt", uav_location) #数据保存
@@ -97,10 +113,9 @@ def run_maze(env):
 
 if __name__ == "__main__":
     # create simulated environment
-    work_dir = 'C:\\Users\\86151\\Desktop\\liwentao\\data'
+    work_dir = 'C:/Users/86151/Desktop/liwentao/data'
     file_path = os.path.join(work_dir, 'data_1.csv')
     env = SimulatedEnv(file_path)
-
 
     run_maze(env)
     # RL.plot_cost()

@@ -14,13 +14,16 @@ from pygame.locals import *
 def refresh_env1():
     screen = pygame.display.set_mode((1100, 1100), 0, 0)
     screen.fill((255, 255, 255))
-    background = pygame.image.load("C:/Users/86151/Desktop/liwentao/Fonts/bg1.png").convert()
-    imageName = "C:/Users/86151/Desktop/liwentao/Fonts/plane2.png"
+
+
+
+    background = pygame.image.load("/Users/yulu/workspace/UAV_RL/Fonts/bg1.png").convert()
+    imageName = "/Users/yulu/workspace/UAV_RL/Fonts/plane2.png"
     # 根据名字生成飞机图片
     image = pygame.image.load(imageName).convert()
-    image1 = pygame.image.load("C:/Users/86151/Desktop/liwentao/Fonts/home.png").convert()
-    image2 = pygame.image.load("C:/Users/86151/Desktop/liwentao/Fonts/final.png").convert()
-    image3 = pygame.image.load("C:/Users/86151/Desktop/liwentao/Fonts/start.png").convert()
+    image1 = pygame.image.load("/Users/yulu/workspace/UAV_RL/Fonts/home.png").convert()
+    image2 = pygame.image.load("/Users/yulu/workspace/UAV_RL/Fonts/final.png").convert()
+    image3 = pygame.image.load("/Users/yulu/workspace/UAV_RL/Fonts/start.png").convert()
     return screen,image,image1,image2,image3
 
 def display(x,y,user_location_x,user_location_y): #刷新环境并显示

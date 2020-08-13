@@ -2,8 +2,8 @@ from collections import namedtuple
 
 import numpy as np
 
-Velocity = namedtuple("velocity", ['x', 'y', 'val'])
-Action = namedtuple('action', ['position', 'velocity'])
+Velocity = namedtuple("velocity", ['x', 'y'])
+Action = namedtuple('action', ['position', 'velocity', 'decision'])
 Observation = namedtuple('observation', ['vals'])
 
 
